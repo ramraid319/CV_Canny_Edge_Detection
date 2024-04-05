@@ -2,9 +2,6 @@ from PIL import Image
 import math
 import numpy as np
 
-"""
-Get and use the functions associated with gaussconvolve2d that you used in the last HW02.
-"""
 def gauss1d(sigma):             # generate odd(sigma) size array, gaussian filter using given density function
     
     odd = np.ceil(sigma * 6)    # calculate filter size using given formula
@@ -45,30 +42,12 @@ def gaussconvolve2d(array,sigma):
     return convolve2d(array, gauss2d(sigma))
 
 def reduce_noise(img):
-    """ Return the gray scale gaussian filtered image with sigma=1.6
-    Args:
-        img: RGB image. Numpy array of shape (H, W, 3).
-    Returns:
-        res: gray scale gaussian filtered image (H, W).
-    """
-
     img = img.convert('L')                                          # get grayscale image
     img_array = np.asarray(img)
     res = gaussconvolve2d(img_array.astype(np.float32), 1.6)        # get gaussian blured image with (sigma = 1.6)
     return res
 
 def sobel_filters(img):
-    """ Returns gradient magnitude and direction of input img.
-    Args:
-        img: Grayscale image. Numpy array of shape (H, W).
-    Returns:
-        G: Magnitude of gradient at each pixel in img.
-            Numpy array of shape (H, W).
-        theta: Direction of gradient at each pixel in img.
-            Numpy array of shape (H, W).
-    Hints:
-        - Use np.hypot and np.arctan2 to calculate square root and arctan
-    """
     x_filter = (1/8)*np.array([[1.0,0.0,-1.0],[2.0,0.0,-2.0],[1.0,0.0,-1.0]], dtype=np.float32)             # make x, y filter and multiply 1/8
     y_filter = (1/8)*np.array([[-1.0, -2.0, -1.0], [0.0, 0.0, 0.0], [1.0, 2.0, 1.0]], dtype=np.float32)
     
@@ -84,15 +63,6 @@ def sobel_filters(img):
     return (G, theta)
 
 def non_max_suppression(G, theta):
-    """ Performs non-maximum suppression.
-    This function performs non-maximum suppression along the direction
-    of gradient (theta) on the gradient magnitude image (G).
-    Args:
-        G: gradient magnitude image with shape of (H, W).
-        theta: direction of gradients with shape of (H, W).
-    Returns:
-        res: non-maxima suppressed image.
-    """
     height, width = G.shape             # get G's shape for operate theta with G
     res = np.zeros_like(G)              # make G' size result array
     
@@ -120,12 +90,6 @@ def non_max_suppression(G, theta):
     return res
 
 def double_thresholding(img):
-    """ 
-    Args:
-        img: numpy array of shape (H, W) representing NMS edge response.
-    Returns:
-        res: double_thresholded image.
-    """
     max_val = np.max(img)           # get max value
     min_val = np.min(img)           # get min value
     
@@ -166,16 +130,6 @@ def dfs(img, res, i, j, visited=[]):
                 dfs(img, res, ii, jj, visited)
 
 def hysteresis(img):
-    """ Find weak edges connected to strong edges and link them.
-    Iterate over each pixel in strong_edges and perform depth first
-    search across the connected pixels in weak_edges to link them.
-    Here we consider a pixel (a, b) is connected to a pixel (c, d)
-    if (a, b) is one of the eight neighboring pixels of (c, d).
-    Args:
-        img: numpy array of shape (H, W) representing NMS edge response.
-    Returns:
-        res: hysteresised image.
-    """
     res = np.zeros_like(img)
     strong = np.where(img == 255)               # search strong_edge
 
